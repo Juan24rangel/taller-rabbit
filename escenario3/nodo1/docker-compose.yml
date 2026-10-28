@@ -1,0 +1,24 @@
+services:
+  prod-pedidos:
+    build: ../../productores/pedidos-python
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+
+  prod-pagos:
+    build: ../../productores/pagos-node
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+
+  cons-notificaciones:
+    build: ../../consumidores/notificaciones-python
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+
+  cons-facturacion:
+    build: ../../consumidores/facturacion-node
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}

@@ -1,0 +1,24 @@
+services:
+  prod-inventario:
+    build: ../../productores/inventario-go
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+
+  prod-envios:
+    build: ../../productores/envios-python
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+
+  cons-bodega:
+    build: ../../consumidores/bodega-go
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}
+
+  cons-auditoria:
+    build: ../../consumidores/auditoria-node
+    restart: on-failure
+    environment:
+      RABBIT_HOST: ${RABBIT_HOST}

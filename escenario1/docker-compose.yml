@@ -1,0 +1,76 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  prod-pedidos:
+    build: ../productores/pedidos-python
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  prod-pagos:
+    build: ../productores/pagos-node
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  prod-inventario:
+    build: ../productores/inventario-go
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  prod-envios:
+    build: ../productores/envios-python
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  cons-notificaciones:
+    build: ../consumidores/notificaciones-python
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  cons-facturacion:
+    build: ../consumidores/facturacion-node
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  cons-bodega:
+    build: ../consumidores/bodega-go
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  cons-auditoria:
+    build: ../consumidores/auditoria-node
+    environment:
+      RABBIT_HOST: rabbitmq
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
